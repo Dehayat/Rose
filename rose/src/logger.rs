@@ -1,6 +1,6 @@
 use env_logger::Env;
 
-pub struct Logger;
+pub(crate) struct Logger;
 
 #[macro_export]
 macro_rules! log_info {
