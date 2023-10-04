@@ -1,3 +1,6 @@
+use rose;
+
 fn main() {
-    println!("Hello, world!");
+    let app =  rose::Application{};
+    app.run();
 }
