@@ -1,0 +1,21 @@
+# Justfile
+
+build:
+    @echo "Building the project..."
+    cargo build
+
+test:
+    @echo "Running tests..."
+    cargo test
+
+run:
+    @echo "Running the project..."
+    cargo run
+
+all: build test run
+
+buildConfig config:
+    cargo build --{{config}}
+    
+runConfig config:
+    cargo run --{{config}}
