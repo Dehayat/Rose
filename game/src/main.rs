@@ -1,4 +1,3 @@
-use log::*;
 use rose::*;
 
 fn main() {

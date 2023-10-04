@@ -1,4 +1,4 @@
-use log::*;
+pub use log::*;
 pub mod logger;
 use logger::Logger;
 
