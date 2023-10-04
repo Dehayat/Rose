@@ -12,10 +12,13 @@ run:
     @echo "Running the project..."
     cargo run
 
-all: build test run
+all: build test doc run
 
 buildConfig config:
     cargo build --{{config}}
     
 runConfig config:
     cargo run --{{config}}
+    
+doc:
+    cargo doc --document-private-items

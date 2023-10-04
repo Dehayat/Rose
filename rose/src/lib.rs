@@ -2,6 +2,13 @@ pub use log::*;
 pub mod logger;
 use logger::Logger;
 
+/// Entry point of the game engine.
+///
+/// Use the [`create`] method to create an `Application` instance.
+/// Then use the [`run`] method to run the game engine.
+///
+/// [`create`]: Application::create
+/// [`run`]: Application::run
 pub struct Application;
 
 impl Application{
