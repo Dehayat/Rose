@@ -1,7 +1,8 @@
 use rose::*;
+use rose::application::Application;
 
 fn main() {
-    let app =  rose::Application::create();
+    let mut app =  Application::create();
     log_info!("Starting Game");
     app.run();
 }

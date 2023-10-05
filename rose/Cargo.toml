@@ -8,3 +8,16 @@ edition = "2021"
 [dependencies]
 env_logger = "0.10.0"
 log = "0.4.0"
+
+[dependencies.sdl2]
+version = "0.35.2"
+default-features = false
+features = ["static-link", "use-vcpkg", "gfx"]
+
+[package.metadata.vcpkg]
+dependencies = ["sdl2", "sdl2-gfx"]
+git = "https://github.com/microsoft/vcpkg"
+rev = "501db0f"
+
+[package.metadata.vcpkg.target]
+x86_64-pc-windows-msvc = { triplet = "x64-windows-static-md" }
