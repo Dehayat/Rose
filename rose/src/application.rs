@@ -2,6 +2,7 @@ use sdl2;
 use log::*;
 
 use crate::logger::Logger;
+use crate::events::{EventSystem, EventType};
 
 /// Entry point of the game engine.
 ///
@@ -12,8 +13,8 @@ use crate::logger::Logger;
 /// [`run`]: Application::run
 pub struct Application{
     //sdl_context: sdl2::Sdl,
-    event_pump: sdl2::EventPump,
     _window: sdl2::video::Window,
+    event_system: EventSystem,
     //video_subsystem: sdl2::VideoSubsystem
 }
 
@@ -27,26 +28,35 @@ impl Application{
         let video_subsystem = sdl_context.video().unwrap();
         let window = video_subsystem.window("Rose Engine", 200, 200).opengl().build().unwrap();
         let event_pump = sdl_context.event_pump().unwrap();
-
+        
+        let event_system = EventSystem{
+            event_pump: event_pump,
+        };
 
         Application{
             //sdl_context,
-            event_pump,
             _window: window,
-            //video_subsystem
+            //video_subsystem,
+            event_system,
         }
     }
 
     pub fn run(&mut self){
         log_info!("Running Rose Engine main loop");
-        'main: loop{
-            for event in self.event_pump.poll_iter() {
-                use sdl2::event::Event;
-                match event {
-                    Event::Quit { .. } => break 'main,
-                    _ => {}
-                }
+        loop{
+            if self.handle_events()==false{
+                break;
             }
         }
+    }
+
+    fn handle_events(&mut self)->bool {
+        while let Some(event) = self.event_system.get_event(){
+            match event.event_type {
+                EventType::ExitEvent { .. } => return false,
+                _ => {}
+            }
+        }
+        return true;
     }
 }
