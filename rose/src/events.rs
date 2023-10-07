@@ -8,6 +8,7 @@ pub enum EventType {
 
 pub struct Event {
     pub event_type: EventType,
+    pub sdl_event : sdl2::event::Event,
 }
 
 pub struct EventSystem {
@@ -28,9 +29,19 @@ impl EventSystem {
         match sdl_event {
             SdlEvent::Quit { .. } => Some(Event {
                 event_type: EventType::ExitEvent,
+                sdl_event,
             }),
             SdlEvent::MouseMotion { .. } => Some(Event {
                 event_type: EventType::MouseEvent,
+                sdl_event,
+            }),
+            SdlEvent::MouseButtonDown { .. } => Some(Event {
+                event_type: EventType::MouseEvent,
+                sdl_event,
+            }),
+            SdlEvent::MouseButtonUp { .. } => Some(Event {
+                event_type: EventType::MouseEvent,
+                sdl_event,
             }),
             _ => None,
         }
@@ -49,6 +60,10 @@ impl EventSystem {
         EventSystemIter {
             inner_iter: self.event_queue.iter(),
         }
+    }
+
+    pub fn get_mouse_state(&self) -> sdl2::mouse::MouseState {
+        sdl2::mouse::MouseState::new(&self.event_pump)
     }
 }
 pub struct EventSystemIter<'a> {
