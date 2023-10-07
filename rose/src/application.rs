@@ -12,10 +12,8 @@ use crate::events::{EventSystem, EventType};
 /// [`create`]: Application::create
 /// [`run`]: Application::run
 pub struct Application{
-    //sdl_context: sdl2::Sdl,
     _window: sdl2::video::Window,
     event_system: EventSystem,
-    //video_subsystem: sdl2::VideoSubsystem
 }
 
 impl Application{
@@ -29,14 +27,10 @@ impl Application{
         let window = video_subsystem.window("Rose Engine", 200, 200).opengl().build().unwrap();
         let event_pump = sdl_context.event_pump().unwrap();
         
-        let event_system = EventSystem{
-            event_pump: event_pump,
-        };
+        let event_system = EventSystem::new(event_pump);
 
         Application{
-            //sdl_context,
             _window: window,
-            //video_subsystem,
             event_system,
         }
     }
@@ -44,6 +38,7 @@ impl Application{
     pub fn run(&mut self){
         log_info!("Running Rose Engine main loop");
         loop{
+            self.event_system.update();
             if self.handle_events()==false{
                 break;
             }
@@ -51,10 +46,16 @@ impl Application{
     }
 
     fn handle_events(&mut self)->bool {
-        while let Some(event) = self.event_system.get_event(){
-            match event.event_type {
-                EventType::ExitEvent { .. } => return false,
-                _ => {}
+        for event in self.event_system.iter() {
+            log_info!("{:?}1",event.event_type);
+            if event.event_type==EventType::ExitEvent{
+                return false;
+            }
+        }
+        for event in self.event_system.iter() {
+            log_info!("{:?}2",event.event_type);
+            if event.event_type==EventType::ExitEvent{
+                return false;
             }
         }
         return true;

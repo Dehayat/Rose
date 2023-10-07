@@ -1,5 +1,8 @@
 # Justfile
 
+set shell := ["powershell.exe", "-c"]
+
+
 build:
     @echo "Building the project..."
     cargo build
