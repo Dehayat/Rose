@@ -1,4 +1,4 @@
-use sdl2::{self, EventPump};
+use sdl2::{self, EventPump, event::WindowEvent};
 
 #[derive(Debug, PartialEq)]
 pub enum EventType {
@@ -27,6 +27,10 @@ impl EventSystem {
     pub fn create_event_from_sdl_event(sdl_event: sdl2::event::Event) -> Option<Event> {
         use sdl2::event::Event as SdlEvent;
         match sdl_event {
+            SdlEvent::Window {win_event, .. } if win_event==WindowEvent::Close => Some(Event {
+                event_type: EventType::ExitEvent,
+                sdl_event,
+            }),
             SdlEvent::Quit { .. } => Some(Event {
                 event_type: EventType::ExitEvent,
                 sdl_event,
@@ -62,6 +66,7 @@ impl EventSystem {
         }
     }
 
+    ///Mainly for imgui
     pub fn get_mouse_state(&self) -> sdl2::mouse::MouseState {
         sdl2::mouse::MouseState::new(&self.event_pump)
     }
