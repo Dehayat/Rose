@@ -5,3 +5,4 @@ pub mod logger;
 pub mod application;
 mod events;
 mod imgui_wrapper;
+mod renderer;

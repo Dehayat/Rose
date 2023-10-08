@@ -1,9 +1,10 @@
 use log::*;
-use sdl2::{self, pixels::Color};
+use sdl2;
 
 use crate::events::{EventSystem, EventType};
 use crate::imgui_wrapper;
 use crate::logger::Logger;
+use crate::renderer;
 
 /// Entry point of the game engine.
 ///
@@ -13,13 +14,14 @@ use crate::logger::Logger;
 /// [`create`]: Application::create
 /// [`run`]: Application::run
 pub struct Application {
-    canvas: sdl2::render::Canvas<sdl2::video::Window>,
+    renderer: renderer::Renderer,
     event_system: EventSystem,
     imgui: imgui_wrapper::ImguiRuntime,
+    window_id:u32,
 }
 
 impl Application {
-    pub fn create() -> Application {
+    pub fn new() -> Application{
         Logger::init();
 
         log_warn!("window is created in application init fn: change later");
@@ -45,21 +47,12 @@ impl Application {
             .window("Rose Engine", 400, 400)
             .build()
             .unwrap();
-        let mut canvas = sdl_window.into_canvas().present_vsync().build().unwrap();
-
-        canvas.set_draw_color(Color::RGB(20, 20, 20));
-
-        canvas.clear();
-
-        canvas.set_draw_color(Color::RGB(255, 210, 0));
-        canvas.fill_rect(sdl2::rect::Rect::new(10, 10, 100, 200)).unwrap();
-
-        canvas.present();
-
+        let window_id = sdl_window.id();
         Application {
-            canvas,
+            renderer: renderer::Renderer::new(sdl_window),
             event_system,
             imgui: imgui_runtime,
+            window_id,
         }
     }
 
@@ -70,14 +63,18 @@ impl Application {
             if self.handle_events() == false {
                 break;
             }
+            self.renderer.render();
+
+            
             self.imgui.update(&self.event_system);
+            std::thread::sleep(std::time::Duration::new(0, 1_000_000_000u32 / 60));
         }
     }
 
     fn handle_events(&mut self) -> bool {
         for event in self.event_system.iter() {
             if event.sdl_event.is_window()
-                && event.sdl_event.get_window_id().unwrap() != self.canvas.window().id()
+                && event.sdl_event.get_window_id().unwrap() != self.window_id
             {
                 continue;
             }

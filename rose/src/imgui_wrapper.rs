@@ -7,7 +7,7 @@ use imgui_glow_renderer::AutoRenderer;
 use imgui_sdl2_support::SdlPlatform;
 use sdl2::video::Window;
 
-use crate::events::EventSystem;
+use crate::events::{EventSystem, self};
 
 fn glow_context(window: &Window) -> glow::Context {
     unsafe {
@@ -22,6 +22,7 @@ pub struct ImguiRuntime {
     last_frame: Instant,
     renderer: AutoRenderer,
     _gl_context: sdl2::video::GLContext,
+    hidden:bool,
 }
 
 impl ImguiRuntime {
@@ -49,14 +50,20 @@ impl ImguiRuntime {
             last_frame: Instant::now(),
             renderer,
             _gl_context: gl_context,
+            hidden:false,
         }
     }
     pub fn update(&mut self, event_system: &EventSystem) {
+        if self.hidden {return}
         for event in event_system.iter() {
             if event.sdl_event.is_window()
                 && event.sdl_event.get_window_id().unwrap() != self.window.id()
             {
                 continue;
+            }
+            if event.event_type==events::EventType::ExitEvent{
+                self.window.hide();
+                self.hidden = true;
             }
             self.platform
                 .handle_event(&mut self.imgui_context, &event.sdl_event);
